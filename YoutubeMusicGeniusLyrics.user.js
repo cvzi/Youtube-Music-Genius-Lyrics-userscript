@@ -3,6 +3,7 @@
 // @description  Show lyrics/songtexts from genius.com on Youtube music next to music videos
 // @license      GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt
 // @copyright    2020, cuzi (https://github.com/cvzi)
+// @author       cuzi
 // @supportURL   https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
 // @updateURL    https://openuserjs.org/meta/cuzi/Youtube_Music_Genius_Lyrics.meta.js
 // @version      1
