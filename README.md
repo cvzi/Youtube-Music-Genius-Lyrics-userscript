@@ -11,7 +11,7 @@ General information about userscripts and how to use them can be found at [openu
 
 If you already have a userscript extension installed, you can install with the link below:
 
-[**Click here to install**](https://openuserjs.org/install/cuzi/Youtube_Genius_Lyrics.user.js)  
+[**Click here to install**](https://openuserjs.org/install/cuzi/Youtube_Music_Genius_Lyrics.user.js)  
 Tested with Firefox/**Greasemonkey** and Chrome/**Tampermonkey**.
 
 Screenshot:
