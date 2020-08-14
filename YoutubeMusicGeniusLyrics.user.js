@@ -6,20 +6,39 @@
 // @author       cuzi
 // @supportURL   https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
 // @updateURL    https://openuserjs.org/meta/cuzi/Youtube_Music_Genius_Lyrics.meta.js
-// @version      1
+// @version      2
 // @require      https://openuserjs.org/src/libs/cuzi/GeniusLyrics.js
 // @grant        GM.xmlHttpRequest
 // @grant        GM.setValue
 // @grant        GM.getValue
+// @grant        GM.registerMenuCommand
 // @grant        unsafeWindow
 // @connect      genius.com
 // @include      https://music.youtube.com/*
 // ==/UserScript==
 
+/*
+    Copyright (C) 2020 cuzi (cuzi@openmail.cc)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 /* global GM, genius, unsafeWindow, geniusLyrics */ // eslint-disable-line no-unused-vars
 
 'use strict'
 
+const SCRIPT_NAME = 'Youtube Music Genius Lyrics'
 var lyricsWidth = '40%'
 
 function addCss () {
@@ -193,30 +212,26 @@ function hideLyrics () {
   addLyricsButton()
 }
 
-var checkFullscreenIV
 function addLyricsButton () {
   if (document.getElementById('showlyricsbutton')) {
     return
   }
-  const top = calcContainerWidthTop()[1]
   const b = document.createElement('div')
   b.setAttribute('id', 'showlyricsbutton')
-  b.setAttribute('style', 'position:absolute;top:' + (top + 2) + 'px;right:0px;color:#ffff64;cursor:pointer;background:black;border-radius:50%;margin:auto;text-align:center;font-size:15px;line-height:15px;')
+  b.setAttribute('style', 'position:absolute;top:1px;right:0px;color:#ffff64;cursor:pointer;z-index:3000;background:black;border-radius:50%;margin:auto;text-align:center;font-size:15px;line-height:15px;')
   b.setAttribute('title', 'Load lyrics from genius.com')
   b.appendChild(document.createTextNode('🅖'))
   b.addEventListener('click', function onShowLyricsButtonClick () {
     genius.option.autoShow = true // Temporarily enable showing lyrics automatically on song change
     genius.iv.main = window.setInterval(main, 2000)
+    b.remove()
     addLyrics(true)
   })
   document.body.appendChild(b)
-
-  window.clearInterval(checkFullscreenIV)
-  checkFullscreenIV = window.setInterval(function () {
-    if (document.getElementById('showlyricsbutton')) {
-      document.getElementById('showlyricsbutton').style.display = document.fullscreenElement ? 'none' : 'block'
-    }
-  }, 1000)
+  if (b.clientWidth < 10) {
+    b.setAttribute('style', 'position:absolute; top: 0px; right:0px; background-color:black; color:#ffff64; cursor:pointer; z-index:3000;border:1px solid #ffff64;border-radius: 100%;padding: 0px 3px;font-size: 12px;')
+    b.innerHTML = 'G'
+  }
 }
 
 var lastSong = null
@@ -499,7 +514,7 @@ function main () {
 
 const genius = geniusLyrics({
   GM: GM,
-  scriptName: 'YoutubeMusicGeniusScript',
+  scriptName: SCRIPT_NAME,
   scriptIssuesURL: 'https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues',
   scriptIssuesTitle: 'Report problem: github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues',
   domain: 'https://music.youtube.com/',
@@ -516,3 +531,5 @@ const genius = geniusLyrics({
   onResize: onResize,
   createSpinner: createSpinner
 })
+
+GM.registerMenuCommand(SCRIPT_NAME + ' - Show lyrics', () => addLyrics(true))
