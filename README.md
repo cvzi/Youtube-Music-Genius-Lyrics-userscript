@@ -17,16 +17,16 @@ Similar scripts:
 *   [Youtube Genius Lyrics](https://github.com/cvzi/Youtube-Genius-Lyrics-userscript)
 *   [Spotify Genius Lyrics](https://github.com/cvzi/Spotify-Genius-Lyrics-userscript)
 
-Screenshot:
+Screenshot:  
 ![Screenshot of youtube music](screenshots/screenshot.png)
 
-Options:
+Options:  
 ![Screenshot of options](screenshots/options.png)
 
-Dark theme ("Spotify" theme)
+Dark theme ("Spotify" theme):  
 ![Screenshot of Spotify theme](screenshots/spotify_theme.png)
 
-White theme
+White theme:  
 ![Screenshot of white theme](screenshots/white_theme.png)
 
 
