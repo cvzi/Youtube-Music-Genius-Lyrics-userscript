@@ -18,7 +18,16 @@ Similar scripts:
 *   [Spotify Genius Lyrics](https://github.com/cvzi/Spotify-Genius-Lyrics-userscript)
 
 Screenshot:
-![Screenshot of youtube music](screenshot.png)
+![Screenshot of youtube music](screenshots/screenshot.png)
+
+Options:
+![Screenshot of options](screenshots/options.png)
+
+Dark theme ("Spotify" theme)
+![Screenshot of Spotify theme](spotify_theme.png)
+
+White theme
+![Screenshot of white theme](white_theme.png)
 
 
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com) ![standardjs](https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/workflows/standardjs/badge.svg)
