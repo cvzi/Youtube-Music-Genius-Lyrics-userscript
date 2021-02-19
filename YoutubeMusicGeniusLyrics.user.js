@@ -6,7 +6,7 @@
 // @author       cuzi
 // @supportURL   https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
 // @updateURL    https://openuserjs.org/meta/cuzi/Youtube_Music_Genius_Lyrics.meta.js
-// @version      3
+// @version      4.0.0
 // @require      https://openuserjs.org/src/libs/cuzi/GeniusLyrics.js
 // @grant        GM.xmlHttpRequest
 // @grant        GM.setValue
@@ -39,7 +39,7 @@
 'use strict'
 
 const SCRIPT_NAME = 'Youtube Music Genius Lyrics'
-var lyricsWidth = '40%'
+let lyricsWidth = '40%'
 
 function addCss () {
   // Spotify
@@ -235,7 +235,7 @@ function addLyricsButton () {
   }
 }
 
-var lastSong = null
+let lastSong = null
 function addLyrics (force, beLessSpecific) {
   const titleNode = document.querySelector('.ytmusic-player-bar .title.ytmusic-player-bar')
   const artistNodes = document.querySelectorAll('.ytmusic-player-bar.subtitle a[href*="channel/"]')
@@ -258,23 +258,32 @@ function addLyrics (force, beLessSpecific) {
     lastSong = song
   }
 
-  songTitle = songTitle.replace('"', '').replace('[', '').replace(']', '').replace('(', '').replace(')', '').replace('|', '')
-  songTitle = songTitle.replace(/\W+$/, '')
-  songTitle = songTitle.replace(/^\W+/, '')
-  songTitle = songTitle.trim()
+  songTitle = genius.f.cleanUpSongTitle(songTitle)
 
-  let feat = songTitle.indexOf(' feat')
-  if (feat !== -1) {
-    songTitle = songTitle.substring(0, feat).trim()
+  let musicIsPlaying = document.querySelector('#play-pause-button #icon svg g path') && !document.querySelector('#play-pause-button #icon svg g path').getAttribute('d').startsWith('M8')
+  if (!document.querySelector('.play-pause-button.spinner-container').hidden) {
+    // Spinner is showing on playpause button -> song was just changed
+    musicIsPlaying = true
   }
-  feat = songTitle.indexOf(' ft')
-  if (feat !== -1) {
-    songTitle = songTitle.substring(0, feat).trim()
-  }
-
-  const musicIsPlaying = document.querySelector('#play-pause-button #icon svg g path') && document.querySelector('#play-pause-button #icon svg g path').getAttribute('d').startsWith('M6')
   genius.f.loadLyrics(force, beLessSpecific, songTitle, songArtistsArr, musicIsPlaying)
 }
+
+let lastPos = null
+function updateAutoScroll () {
+  let pos = null
+  try {
+    const [current, total] = document.querySelector('.ytmusic-player-bar .time-info.ytmusic-player-bar').textContent.split('/').map(s => s.trim()).map(s => s.split(':').reverse().map((d, i, a) => parseInt(d) * Math.pow(60, i)).reduce((a, c) => a + c, 0))
+    pos = current / total
+  } catch (e) {
+    // Could not parse current song position
+    pos = null
+  }
+  if (pos != null && !Number.isNaN(pos) && lastPos !== pos) {
+    genius.f.scrollLyrics(pos)
+    lastPos = pos
+  }
+}
+window.setInterval(updateAutoScroll, 7000)
 
 function showSearchField (query) {
   const b = getCleanLyricsContainer()
@@ -292,6 +301,16 @@ function showSearchField (query) {
   const span = b.appendChild(document.createElement('span'))
   span.style = 'cursor:pointer'
   span.appendChild(document.createTextNode(' \uD83D\uDD0D'))
+
+  // Hide button
+  const hideButton = b.appendChild(document.createElement('span'))
+  hideButton.style = 'cursor:pointer;opacity: 0.8;padding-left: 10px;color: white;font-size: larger;vertical-align: top;'
+  hideButton.title = 'Hide'
+  hideButton.appendChild(document.createTextNode('\uD83C\uDD87'))
+  hideButton.addEventListener('click', function hideButtonClick (ev) {
+    ev.preventDefault()
+    hideLyrics()
+  })
 
   if (query) {
     input.value = query
