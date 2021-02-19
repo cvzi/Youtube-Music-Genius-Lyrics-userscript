@@ -1,0 +1,41 @@
+{
+    "name": "youtube-music-genius-lyrics-userscript",
+    "version": "4.0.0",
+    "description": "Show lyrics/songtexts from genius.com on Youtube music next to music videos",
+    "keywords": [
+        "userscript",
+        "greasemonkey",
+        "tampermonkey",
+        "youtube",
+        "music",
+        "genius",
+        "lyrics",
+        "songtext"
+    ],
+    "homepage": "https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/",
+    "repository": {
+        "type": "git",
+        "url": "github:cvzi/Youtube-Music-Genius-Lyrics-userscript"
+    },
+    "bugs": {
+        "url": "https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues",
+        "email": "cuzi@openmail.cc"
+    },
+    "author": "cuzi",
+    "license": "GPL-3.0-or-later",
+    "scripts": {
+        "start": "node -r esm server.js"
+    },
+    "dependencies": {
+        "colorette": "^1.2.1",
+        "esm": "^3.2.25",
+        "serve": "^11.3.2",
+        "standard": "^16.0.3"
+    },
+    "devDependencies": {
+        "genius-lyrics-userscript": "^5.0.0"
+    },
+    "config": {
+        "port": "8126"
+    }
+}
