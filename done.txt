@@ -1,4 +1,0 @@
-Fix:
- - after song change lyrics were not loaded
- - remove version info from song (e.g. "Stereo Mix", "Remastered Version")
- TODO close search fields again on no results: like: https://www.youtube.com/watch?v=Q1Gjc8RzUlA
