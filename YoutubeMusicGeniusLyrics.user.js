@@ -6,7 +6,7 @@
 // @author       cuzi
 // @supportURL   https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
 // @updateURL    https://openuserjs.org/meta/cuzi/Youtube_Music_Genius_Lyrics.meta.js
-// @version      4.0.0
+// @version      4.0.1
 // @require      https://openuserjs.org/src/libs/cuzi/GeniusLyrics.js
 // @grant        GM.xmlHttpRequest
 // @grant        GM.setValue
@@ -283,7 +283,6 @@ function updateAutoScroll () {
     lastPos = pos
   }
 }
-window.setInterval(updateAutoScroll, 7000)
 
 function showSearchField (query) {
   const b = getCleanLyricsContainer()
@@ -553,3 +552,5 @@ const genius = geniusLyrics({
 })
 
 GM.registerMenuCommand(SCRIPT_NAME + ' - Show lyrics', () => addLyrics(true))
+
+window.setInterval(updateAutoScroll, 7000)
