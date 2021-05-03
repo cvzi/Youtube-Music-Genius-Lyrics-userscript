@@ -1,20 +1,27 @@
 // ==UserScript==
-// @name         Youtube Music Genius Lyrics
-// @description  Show lyrics/songtexts from genius.com on Youtube music next to music videos
-// @license      GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt
-// @copyright    2020, cuzi (https://github.com/cvzi)
-// @author       cuzi
-// @supportURL   https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @updateURL    https://openuserjs.org/meta/cuzi/Youtube_Music_Genius_Lyrics.meta.js
-// @version      4.0.2
-// @require      https://openuserjs.org/src/libs/cuzi/GeniusLyrics.js
-// @grant        GM.xmlHttpRequest
-// @grant        GM.setValue
-// @grant        GM.getValue
-// @grant        GM.registerMenuCommand
-// @grant        unsafeWindow
-// @connect      genius.com
-// @include      https://music.youtube.com/*
+// @name            Youtube Music Genius Lyrics
+// @description     Shows lyrics/songtexts from genius.com on Youtube music next to music videos
+// @description:es  Mostra la letra de genius.com de las canciones en Youtube Music
+// @description:de  Zeigt den Songtext von genius.com auf Youtube Music an
+// @description:fr  Présente les paroles de chansons de genius.com sur Youtube Music
+// @description:pl  Pokazuje teksty piosenek z genius.com na Youtube Music
+// @description:pt  Mostra letras de genius.com no Youtube Music
+// @description:it  Mostra i testi delle canzoni di genius.com su Youtube Music
+// @description:ja  YouTube Music（ユーチューブ ミュージック）プレーヤーで、スクリプトが genius.com の歌詞を表示する
+// @license         GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt
+// @copyright       2020, cuzi (https://github.com/cvzi)
+// @author          cuzi
+// @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
+// @updateURL       https://openuserjs.org/meta/cuzi/Youtube_Music_Genius_Lyrics.meta.js
+// @version         4.0.2
+// @require         https://openuserjs.org/src/libs/cuzi/GeniusLyrics.js
+// @grant           GM.xmlHttpRequest
+// @grant           GM.setValue
+// @grant           GM.getValue
+// @grant           GM.registerMenuCommand
+// @grant           unsafeWindow
+// @connect         genius.com
+// @include         https://music.youtube.com/*
 // ==/UserScript==
 
 /*
