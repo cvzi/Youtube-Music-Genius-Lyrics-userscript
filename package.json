@@ -27,13 +27,13 @@
         "start": "node -r esm server.js"
     },
     "dependencies": {
-        "colorette": "^1.2.1",
+        "colorette": "^1.2.2",
         "esm": "^3.2.25",
-        "serve": "^11.3.2",
+        "serve": "^12.0.0",
         "standard": "^16.0.3"
     },
     "devDependencies": {
-        "genius-lyrics-userscript": "^5.0.0"
+        "genius-lyrics-userscript": "^5.1.3"
     },
     "config": {
         "port": "8126"

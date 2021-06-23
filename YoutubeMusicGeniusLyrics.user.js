@@ -13,7 +13,7 @@
 // @author          cuzi
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
 // @updateURL       https://openuserjs.org/meta/cuzi/Youtube_Music_Genius_Lyrics.meta.js
-// @version         4.0.2
+// @version         4.0.3
 // @require         https://openuserjs.org/src/libs/cuzi/GeniusLyrics.js
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
