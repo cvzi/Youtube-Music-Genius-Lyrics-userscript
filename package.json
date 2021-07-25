@@ -1,6 +1,6 @@
 {
     "name": "youtube-music-genius-lyrics-userscript",
-    "version": "4.0.3",
+    "version": "4.0.4",
     "description": "Show lyrics/songtexts from genius.com on Youtube music next to music videos",
     "keywords": [
         "userscript",
