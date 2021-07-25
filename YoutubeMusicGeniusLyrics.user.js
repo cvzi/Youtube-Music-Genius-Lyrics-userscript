@@ -13,7 +13,7 @@
 // @author          cuzi
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
 // @updateURL       https://openuserjs.org/meta/cuzi/Youtube_Music_Genius_Lyrics.meta.js
-// @version         4.0.3
+// @version         4.0.4
 // @require         https://openuserjs.org/src/libs/cuzi/GeniusLyrics.js
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
@@ -265,6 +265,8 @@ function addLyrics (force, beLessSpecific) {
     lastSong = song
   }
 
+  songTitle = songTitle.replace(/[([]\w+\s*\w*\s*video[)\]]/i, '').trim()
+  songTitle = songTitle.replace(/[([]\w*\s*audio[)\]]/i, '').trim()
   songTitle = genius.f.cleanUpSongTitle(songTitle)
 
   let musicIsPlaying = document.querySelector('#play-pause-button #icon svg g path') && !document.querySelector('#play-pause-button #icon svg g path').getAttribute('d').startsWith('M8')
