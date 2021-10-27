@@ -27,10 +27,10 @@
         "start": "node -r esm server.js"
     },
     "dependencies": {
-        "colorette": "^1.3.0",
+        "colorette": "^2.0.16",
         "esm": "^3.2.25",
-        "serve": "^12.0.0",
-        "standard": "^16.0.3"
+        "serve": "^12.0.1",
+        "standard": "^16.0.4"
     },
     "devDependencies": {
         "genius-lyrics-userscript": "^5.2.6"
