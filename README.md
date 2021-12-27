@@ -10,7 +10,7 @@ General information about userscripts and how to use them can be found at [openu
 
 If you already have a userscript extension installed, you can install with the link below:
 
-[**Click here to install**](https://openuserjs.org/install/cuzi/Youtube_Music_Genius_Lyrics.user.js)  
+[**Click here to install**](https://greasyfork.org/scripts/406892-youtube-music-genius-lyrics/code/Youtube%20Music%20Genius%20Lyrics.user.js)  
 Tested with Firefox/**Tampermonkey** and Chrome/**Tampermonkey**.
 
 Similar scripts:
