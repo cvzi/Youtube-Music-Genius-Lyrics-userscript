@@ -1,6 +1,6 @@
 {
     "name": "youtube-music-genius-lyrics-userscript",
-    "version": "4.0.6",
+    "version": "4.0.7",
     "description": "Show lyrics/songtexts from genius.com on Youtube music next to music videos",
     "keywords": [
         "userscript",
@@ -29,7 +29,7 @@
     "dependencies": {
         "colorette": "^2.0.16",
         "esm": "^3.2.25",
-        "serve": "^12.0.1",
+        "serve": "^13.0.2",
         "standard": "^16.0.4"
     },
     "devDependencies": {
