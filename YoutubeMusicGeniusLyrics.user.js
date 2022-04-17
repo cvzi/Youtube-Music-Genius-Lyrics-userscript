@@ -12,7 +12,7 @@
 // @copyright       2020, cuzi (https://github.com/cvzi)
 // @author          cuzi
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.6
+// @version         4.0.7
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
