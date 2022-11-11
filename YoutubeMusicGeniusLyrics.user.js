@@ -540,23 +540,23 @@ function main () {
 }
 
 const genius = geniusLyrics({
-  GM: GM,
+  GM,
   scriptName: SCRIPT_NAME,
   scriptIssuesURL: 'https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues',
   scriptIssuesTitle: 'Report problem: github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues',
   domain: 'https://music.youtube.com/',
   emptyURL: 'https://music.youtube.com/robots.txt',
   config: [configLyricsWidth],
-  main: main,
-  addCss: addCss,
-  listSongs: listSongs,
-  showSearchField: showSearchField,
-  addLyrics: addLyrics,
-  hideLyrics: hideLyrics,
-  getCleanLyricsContainer: getCleanLyricsContainer,
-  setFrameDimensions: setFrameDimensions,
-  onResize: onResize,
-  createSpinner: createSpinner
+  main,
+  addCss,
+  listSongs,
+  showSearchField,
+  addLyrics,
+  hideLyrics,
+  getCleanLyricsContainer,
+  setFrameDimensions,
+  onResize,
+  createSpinner
 })
 
 GM.registerMenuCommand(SCRIPT_NAME + ' - Show lyrics', () => addLyrics(true))
