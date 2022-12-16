@@ -11,8 +11,9 @@
 // @license         GPL-3.0-or-later; http://www.gnu.org/licenses/gpl-3.0.txt
 // @copyright       2020, cuzi (https://github.com/cvzi)
 // @author          cuzi
+// @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.7
+// @version         4.0.8
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
@@ -46,7 +47,7 @@
 
 const SCRIPT_NAME = 'Youtube Music Genius Lyrics'
 let lyricsWidth = '40%'
-
+let resizeRequested = false
 function addCss () {
   // Spotify
   document.head.appendChild(document.createElement('style')).innerHTML = `
@@ -153,7 +154,7 @@ function setFrameDimensions (container, iframe) {
 
 function onResize () {
   window.setTimeout(function () {
-    genius.option.resizeOnNextRun = true
+    resizeRequested = true
   }, 200)
 }
 
@@ -203,6 +204,16 @@ function getCleanLyricsContainer () {
   return document.getElementById('lyricscontainer')
 }
 
+function getSongInfoNodes () {
+  const titleNode = document.querySelector('.ytmusic-player-bar .title.ytmusic-player-bar')
+  const artistNodes = document.querySelectorAll('.ytmusic-player-bar.subtitle a[href*="channel/"]')
+  return {
+    titleNode,
+    artistNodes,
+    isSongQueuedOrPlaying: artistNodes.length > 0 && artistNodes[0].textContent.trim() && titleNode && titleNode.textContent.trim()
+  }
+}
+
 function hideLyrics () {
   document.querySelectorAll('.loadingspinner').forEach((spinner) => spinner.remove())
   if (document.getElementById('lyricscontainer')) {
@@ -243,9 +254,8 @@ function addLyricsButton () {
 
 let lastSong = null
 function addLyrics (force, beLessSpecific) {
-  const titleNode = document.querySelector('.ytmusic-player-bar .title.ytmusic-player-bar')
-  const artistNodes = document.querySelectorAll('.ytmusic-player-bar.subtitle a[href*="channel/"]')
-  if (!titleNode || !titleNode.textContent || artistNodes.length === 0) {
+  const { titleNode, artistNodes, isSongQueuedOrPlaying } = getSongInfoNodes()
+  if (!isSongQueuedOrPlaying) {
     // No song is playing
     lastSong = null
     hideLyrics()
@@ -525,20 +535,21 @@ function configLyricsWidth (div) {
 function main () {
   GM.getValue('lyricswidth', '40%').then(function (v) {
     lyricsWidth = v
-    if (document.querySelector('.ytmusic-player-bar .title.ytmusic-player-bar')) {
+    if (getSongInfoNodes().isSongQueuedOrPlaying) {
       if (genius.option.autoShow) {
         addLyrics()
       } else {
         addLyricsButton()
       }
-      if (genius.option.resizeOnNextRun) {
-        genius.option.resizeOnNextRun = false
+      if (resizeRequested) {
+        resizeRequested = false
         resize()
       }
     }
   })
 }
 
+const isRobotsTxt = document.location.href.indexOf('robots.txt') >= 0
 const genius = geniusLyrics({
   GM,
   scriptName: SCRIPT_NAME,
@@ -559,6 +570,27 @@ const genius = geniusLyrics({
   createSpinner
 })
 
-GM.registerMenuCommand(SCRIPT_NAME + ' - Show lyrics', () => addLyrics(true))
+if (isRobotsTxt === false) {
+  GM.registerMenuCommand(SCRIPT_NAME + ' - Show lyrics', () => addLyrics(true))
 
-window.setInterval(updateAutoScroll, 7000)
+  function videoTimeUpdate (ev) {
+    if (genius.f.isScrollLyricsEnabled()) {
+      if ((ev || 0).target.nodeName === 'VIDEO') updateAutoScroll()
+    }
+  }
+
+  window.addEventListener('message', function (e) {
+    const data = ((e || 0).data || 0)
+    if (data.iAm === SCRIPT_NAME && data.type === 'lyricsDisplayState') {
+      let isScrollLyricsEnabled = false
+      if (data.visibility === 'loaded' && data.lyricsSuccess === true) {
+        isScrollLyricsEnabled = genius.f.isScrollLyricsEnabled()
+      }
+      if (isScrollLyricsEnabled === true) {
+        document.addEventListener('timeupdate', videoTimeUpdate, true)
+      } else {
+        document.removeEventListener('timeupdate', videoTimeUpdate, true)
+      }
+    }
+  })
+}
