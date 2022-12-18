@@ -29,7 +29,7 @@
     "dependencies": {
         "colorette": "^2.0.19",
         "esm": "^3.2.25",
-        "serve": "^14.1.1",
+        "serve": "^14.1.2",
         "standard": "^17.0.0"
     },
     "devDependencies": {
