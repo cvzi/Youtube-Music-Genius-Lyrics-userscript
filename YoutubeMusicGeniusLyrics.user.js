@@ -14,7 +14,7 @@
 // @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
 // @version         4.0.9
-// @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
+// @require https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js?version=1129650
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
 // @grant           GM.getValue
