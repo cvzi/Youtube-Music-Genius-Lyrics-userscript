@@ -616,7 +616,7 @@ if (isRobotsTxt === false) {
     if (typeof genius.f.updateAutoScrollEnabled !== 'function') return
     window.requestAnimationFrame(() => {
       // not execute for all foreground and background tabs, only execute when the tab is visibile / when the tab shows
-      genius.f.updateAutoScrollEnabled().then(()=>{
+      genius.f.updateAutoScrollEnabled().then(() => {
         let isScrollLyricsEnabled = false
         if (lyricsDisplayState === 'loaded') {
           isScrollLyricsEnabled = genius.f.isScrollLyricsEnabled()
@@ -630,7 +630,7 @@ if (isRobotsTxt === false) {
     })
   }
 
-  if(typeof GM_addValueChangeListener === 'function'){
+  if (typeof GM_addValueChangeListener === 'function') {
     GM_addValueChangeListener('autoscrollenabled', autoscrollenabledChanged)
   }
 }
