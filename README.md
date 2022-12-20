@@ -13,9 +13,11 @@ If you already have a userscript extension installed, you can install with the l
 [**Click here to install**](https://greasyfork.org/scripts/406892-youtube-music-genius-lyrics/code/Youtube%20Music%20Genius%20Lyrics.user.js)  
 Tested with Firefox/**Tampermonkey** and Chrome/**Tampermonkey**.
 
-Similar scripts:
-*   [Youtube Genius Lyrics](https://github.com/cvzi/Youtube-Genius-Lyrics-userscript)
-*   [Spotify Genius Lyrics](https://github.com/cvzi/Spotify-Genius-Lyrics-userscript)
+Family of GeniusLyrics Userscripts:
+*   Powered by **GeniusLyrics Library** [GitHub](https://github.com/cvzi/genius-lyrics-userscript/) [Greaskfork](https://greasyfork.org/en/scripts/406698-geniuslyrics)
+*   **Spotify Genius Lyrics** [GitHub](https://github.com/cvzi/Spotify-Genius-Lyrics-userscript) [Greaskfork](https://greasyfork.org/en/scripts/377439-spotify-genius-lyrics)
+*   **Youtube Genius Lyrics** [GitHub](https://github.com/cvzi/Youtube-Genius-Lyrics-userscript) [Greaskfork](https://greasyfork.org/en/scripts/386259-youtube-genius-lyrics)
+*   **Youtube Music Genius Lyrics** [GitHub](https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/) [Greaskfork](https://greasyfork.org/en/scripts/406892-youtube-music-genius-lyrics)
 
 Screenshot:  
 ![Screenshot of youtube music](screenshots/screenshot.png)
