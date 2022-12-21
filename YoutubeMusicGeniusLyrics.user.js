@@ -308,18 +308,7 @@ function updateAutoScroll (video, force) { // eslint-disable-line no-unused-vars
     pos = video.currentTime / video.duration
   }
   if (pos !== null && pos >= 0 && `${lastPos}` !== `${pos}`) {
-    lastPos = pos
-    const ct = video.currentTime
-    if (force === true) {
-      genius.f.scrollLyrics(pos)
-    } else {
-      setTimeout(() => {
-        const ct1 = video.currentTime
-        if (ct1 - ct < 50 / 1000 && ct1 > ct) {
-          genius.f.scrollLyrics(ct1 / video.duration)
-        }
-      }, 30)
-    }
+    genius.f.scrollLyrics(pos)
   }
 }
 
