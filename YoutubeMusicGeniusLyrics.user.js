@@ -46,6 +46,7 @@
 'use strict'
 
 const SCRIPT_NAME = 'Youtube Music Genius Lyrics'
+let lyricsDisplayState = 'hidden'
 let lyricsWidth = '40%'
 let resizeRequested = false
 function addCss () {
@@ -308,6 +309,7 @@ function updateAutoScroll (video, force) { // eslint-disable-line no-unused-vars
     pos = video.currentTime / video.duration
   }
   if (pos !== null && pos >= 0 && `${lastPos}` !== `${pos}`) {
+    lastPos = pos
     genius.f.scrollLyrics(pos)
   }
 }
@@ -596,6 +598,7 @@ if (isRobotsTxt === false) {
       if (data.visibility === 'loaded' && data.lyricsSuccess === true) {
         isScrollLyricsEnabled = genius.f.isScrollLyricsEnabled()
       }
+      lyricsDisplayState = data.visibility
       if (isScrollLyricsEnabled === true) {
         document.addEventListener('timeupdate', videoTimeUpdate, true)
       } else {
