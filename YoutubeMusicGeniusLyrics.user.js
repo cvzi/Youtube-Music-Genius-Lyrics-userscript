@@ -13,13 +13,13 @@
 // @author          cuzi
 // @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.9
+// @version         4.0.10
 // @require https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js?version=1129650
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
 // @grant           GM.getValue
 // @grant           GM.registerMenuCommand
-// @grant           unsafeWindow
+// @grant           GM_addValueChangeListener
 // @connect         genius.com
 // @match           https://music.youtube.com/*
 // ==/UserScript==
@@ -41,11 +41,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/* global GM, genius, unsafeWindow, geniusLyrics */ // eslint-disable-line no-unused-vars
+/* global GM, genius, geniusLyrics, GM_addValueChangeListener */ // eslint-disable-line no-unused-vars
 
 'use strict'
 
 const SCRIPT_NAME = 'Youtube Music Genius Lyrics'
+let lyricsDisplayState = 'hidden'
 let lyricsWidth = '40%'
 let resizeRequested = false
 function addCss () {
@@ -286,19 +287,30 @@ function addLyrics (force, beLessSpecific) {
   genius.f.loadLyrics(force, beLessSpecific, songTitle, songArtistsArr, musicIsPlaying)
 }
 
-let lastPos = null
-function updateAutoScroll () {
-  let pos = null
-  try {
-    const [current, total] = document.querySelector('.ytmusic-player-bar .time-info.ytmusic-player-bar').textContent.split('/').map(s => s.trim()).map(s => s.split(':').reverse().map((d, i, a) => parseInt(d) * Math.pow(60, i)).reduce((a, c) => a + c, 0))
-    pos = current / total
-  } catch (e) {
-    // Could not parse current song position
-    pos = null
+function getYoutubeMainVideo () {
+  let video = document.querySelector('#movie_player video[src]')
+  if (video !== null) {
+    return video
   }
-  if (pos != null && !Number.isNaN(pos) && lastPos !== pos) {
-    genius.f.scrollLyrics(pos)
+  video = document.querySelector('video[src]')
+  if (video !== null) {
+    return video
+  }
+  return null
+}
+
+let lastPos = null
+function updateAutoScroll (video, force) { // eslint-disable-line no-unused-vars
+  let pos = null
+  if (!video) {
+    video = getYoutubeMainVideo()
+  }
+  if (video) {
+    pos = video.currentTime / video.duration
+  }
+  if (pos !== null && pos >= 0 && `${lastPos}` !== `${pos}`) {
     lastPos = pos
+    genius.f.scrollLyrics(pos)
   }
 }
 
@@ -586,6 +598,7 @@ if (isRobotsTxt === false) {
       if (data.visibility === 'loaded' && data.lyricsSuccess === true) {
         isScrollLyricsEnabled = genius.f.isScrollLyricsEnabled()
       }
+      lyricsDisplayState = data.visibility
       if (isScrollLyricsEnabled === true) {
         document.addEventListener('timeupdate', videoTimeUpdate, true)
       } else {
@@ -593,4 +606,27 @@ if (isRobotsTxt === false) {
       }
     }
   })
+
+  function autoscrollenabledChanged () {
+    // when value is configurated in any tab, this function will be triggered in all tabs by Userscript Manager
+    if (typeof genius.f.updateAutoScrollEnabled !== 'function') return
+    window.requestAnimationFrame(() => {
+      // not execute for all foreground and background tabs, only execute when the tab is visibile / when the tab shows
+      genius.f.updateAutoScrollEnabled().then(() => {
+        let isScrollLyricsEnabled = false
+        if (lyricsDisplayState === 'loaded') {
+          isScrollLyricsEnabled = genius.f.isScrollLyricsEnabled()
+        }
+        if (isScrollLyricsEnabled === true) {
+          document.addEventListener('timeupdate', videoTimeUpdate, true)
+        } else {
+          document.removeEventListener('timeupdate', videoTimeUpdate, true)
+        }
+      })
+    })
+  }
+
+  if (typeof GM_addValueChangeListener === 'function') {
+    GM_addValueChangeListener('autoscrollenabled', autoscrollenabledChanged)
+  }
 }
