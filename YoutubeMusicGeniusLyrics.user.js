@@ -13,7 +13,7 @@
 // @author          cuzi
 // @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.11
+// @version         4.0.12
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
@@ -343,6 +343,10 @@ function showSearchField (query) {
 
   if (query) {
     input.value = query
+  } else if (genius.current.compoundTitle) {
+    input.value = genius.current.compoundTitle.replace('\t', ' ')
+  } else if (genius.current.artists && genius.current.title) {
+    input.value = genius.current.artists + ' ' + genius.current.title
   } else if (genius.current.artists) {
     input.value = genius.current.artists
   }
@@ -384,8 +388,12 @@ function listSongs (hits, container, query) {
     ev.preventDefault()
     if (query) {
       showSearchField(query)
-    } else if (genius.current.artists) {
+    } else if (genius.current.compoundTitle) {
+      showSearchField(genius.current.compoundTitle.replace('\t', ' '))
+    } else if (genius.current.artists && genius.current.title) {
       showSearchField(genius.current.artists + ' ' + genius.current.title)
+    } else if (genius.current.artists) {
+      showSearchField(genius.current.artists)
     } else {
       showSearchField()
     }
@@ -420,10 +428,9 @@ function listSongs (hits, container, query) {
   const ol = container.querySelector('ol.tracklist')
   ol.style.listStyle = 'none'
   const searchresultsLengths = hits.length
-  const title = genius.current.title
-  const artists = genius.current.artists
+  const compoundTitle = genius.current.compoundTitle
   const onclick = function onclick () {
-    genius.f.rememberLyricsSelection(title, artists, this.dataset.hit)
+    genius.f.rememberLyricsSelection(compoundTitle, null, this.dataset.hit)
     genius.f.showLyrics(JSON.parse(this.dataset.hit), searchresultsLengths)
   }
   const mouseover = function onmouseover () {
