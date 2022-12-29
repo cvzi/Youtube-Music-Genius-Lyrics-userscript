@@ -51,7 +51,9 @@ let lyricsWidth = '40%'
 let resizeRequested = false
 function addCss () {
   // Spotify
-  document.head.appendChild(document.createElement('style')).innerHTML = `
+  const style = document.createElement('style')
+  style.id = 'youtube-music-genius-lyrics-style'
+  style.innerHTML = `
   #lyricscontainer {
     position:fixed;
     right:0px;
@@ -122,6 +124,7 @@ function addCss () {
     min-width: 60%;
   }
   `
+  document.head.appendChild(style)
 }
 
 function calcContainerWidthTop () {
