@@ -447,6 +447,31 @@ function listSongs (hits, container, query) {
     this.style.backgroundColor = '#333'
   }
 
+  hits.sort(function compareFn (a, b) {
+    if (genius.current.compoundTitle) {
+      if (genius.current.compoundTitle.toLowerCase() === (a.result.artist_names + '\t' + a.result.title_with_featured).toLowerCase()) {
+        return -1
+      }
+      if (genius.current.compoundTitle.toLowerCase() === (b.result.artist_names + '\t' + b.result.title_with_featured).toLowerCase()) {
+        return 1
+      }
+    } else if (genius.current.artists && genius.current.title) {
+      if (genius.current.artists.toLowerCase() === a.result.artist_names.toLowerCase() && genius.current.title.toLowerCase() === a.result.title_with_featured.toLowerCase()) {
+        return -1
+      }
+      if (genius.current.artists.toLowerCase() === b.result.artist_names.toLowerCase() && genius.current.title.toLowerCase() === b.result.title_with_featured.toLowerCase()) {
+        return 1
+      }
+      if (genius.current.title.toLowerCase() === a.result.title_with_featured.toLowerCase()) {
+        return -1
+      }
+      if (genius.current.title.toLowerCase() === b.result.title_with_featured.toLowerCase()) {
+        return 1
+      }
+    }
+    return 0
+  })
+
   hits.forEach(function forEachHit (hit) {
     const li = document.createElement('li')
     li.style.cursor = 'pointer'
