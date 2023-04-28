@@ -571,6 +571,23 @@ function main () {
   })
 }
 
+function styleIframeContent () {
+  if (genius.option.themeKey === 'genius') {
+    genius.style.enabled = true
+    genius.style.setup = () => {
+      genius.style.setup = null // run once; set variables to genius.styleProps
+      if (genius.option.themeKey !== 'genius') {
+        genius.style.enabled = false
+        return false
+      }
+      return true
+    }
+  } else {
+    genius.style.enabled = false
+    genius.style.setup = null
+  }
+}
+
 const isRobotsTxt = document.location.href.indexOf('robots.txt') >= 0
 const genius = geniusLyrics({
   GM,
@@ -591,6 +608,11 @@ const genius = geniusLyrics({
   onResize,
   createSpinner
 })
+
+genius.option.enableStyleSubstitution = true
+genius.option.cacheHTMLRequest = true // 1 lyrics page consume 2XX KB [OR 25 ~ 50KB under ]
+
+genius.onThemeChanged.push(styleIframeContent)
 
 if (isRobotsTxt === false) {
   GM.registerMenuCommand(SCRIPT_NAME + ' - Show lyrics', () => addLyrics(true))
