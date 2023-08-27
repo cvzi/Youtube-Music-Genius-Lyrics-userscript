@@ -13,7 +13,7 @@
 // @author          cuzi
 // @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.15
+// @version         4.0.16
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
@@ -54,6 +54,14 @@ function addCss () {
   const style = document.createElement('style')
   style.id = 'youtube-music-genius-lyrics-style'
   style.innerHTML = `
+  #myconfigwin39457845 button {
+    border-radius: 5px;
+    padding: 3px;
+    margin: 0 1px;
+    border: 1px solid #8f8f9d;
+    color: black;
+    text-decoration: none;
+  }
   #lyricscontainer {
     position:fixed;
     right:0px;
