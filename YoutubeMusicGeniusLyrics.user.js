@@ -13,7 +13,7 @@
 // @author          cuzi
 // @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.17
+// @version         4.0.18
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
@@ -54,14 +54,6 @@ function addCss () {
   const style = document.createElement('style')
   style.id = 'youtube-music-genius-lyrics-style'
   style.innerHTML = `
-  #myconfigwin39457845 button {
-    border-radius: 5px;
-    padding: 3px;
-    margin: 0 1px;
-    border: 1px solid #8f8f9d;
-    color: black;
-    text-decoration: none;
-  }
   #lyricscontainer {
     position:fixed;
     right:0px;
@@ -136,11 +128,14 @@ function addCss () {
 }
 
 function calcContainerWidthTop () {
+  const playerBar = document.querySelector('ytmusic-nav-bar')
   const playerPage = document.querySelector('ytmusic-player-page#player-page')
-  const bar = document.querySelector('#lyricscontainer .lyricsnavbar')
-  const dim = playerPage.getBoundingClientRect()
-  const left = dim.left + dim.width
-  const top = dim.top - (bar ? bar.getBoundingClientRect().height : 11)
+  const lyricsBar = document.querySelector('#lyricscontainer .lyricsnavbar')
+  const playerPageDim = playerPage.getBoundingClientRect()
+  const playerBarDim = playerBar.getBoundingClientRect()
+
+  const left = playerPageDim.left + playerPageDim.width
+  const top = playerBarDim.height - (lyricsBar ? lyricsBar.getBoundingClientRect().height : 11)
   return [left, top]
 }
 
@@ -245,11 +240,10 @@ function addLyricsButton () {
   if (document.getElementById('showlyricsbutton')) {
     return
   }
-  const b = document.createElement('div')
+  const b = document.body.appendChild(document.createElement('div'))
   b.setAttribute('id', 'showlyricsbutton')
-  b.setAttribute('style', 'position:absolute;top:1px;right:0px;color:#ffff64;cursor:pointer;z-index:3000;background:black;border-radius:50%;margin:auto;text-align:center;font-size:15px;line-height:15px;')
+  b.setAttribute('style', 'position: absolute; min-width: 22px; top: 1px; right: 0px; cursor: pointer; z-index: 3000; background: transparent; text-align: right;')
   b.setAttribute('title', 'Load lyrics from genius.com')
-  b.appendChild(document.createTextNode('🅖'))
   b.addEventListener('click', function onShowLyricsButtonClick () {
     genius.option.autoShow = true // Temporarily enable showing lyrics automatically on song change
     window.clearInterval(genius.iv.main)
@@ -257,10 +251,12 @@ function addLyricsButton () {
     b.remove()
     addLyrics(true)
   })
-  document.body.appendChild(b)
-  if (b.clientWidth < 10) {
-    b.setAttribute('style', 'position:absolute; top: 0px; right:0px; background-color:black; color:#ffff64; cursor:pointer; z-index:3000;border:1px solid #ffff64;border-radius: 100%;padding: 0px 3px;font-size: 12px;')
-    b.innerHTML = 'G'
+  const g = b.appendChild(document.createElement('span'))
+  g.setAttribute('style', 'display:inline; color: #ffff64; background: black; border-radius: 50%; margin: auto; font-size: 15px; line-height: 15px;padding: 0px 2px;')
+  g.appendChild(document.createTextNode('🅖'))
+  if (g.getBoundingClientRect().width < 10) { // in case the font doesn't have "🅖" symbol
+    g.setAttribute('style', 'border: 2px solid #ffff64; border-radius: 100%; padding: 0px 3px; font-size: 11px; background-color: black; color: #ffff64; font-weight: 700;')
+    g.innerHTML = 'G'
   }
 }
 
@@ -290,11 +286,8 @@ function addLyrics (force, beLessSpecific) {
   songTitle = songTitle.replace(/[([]\w*\s*audio[)\]]/i, '').trim()
   songTitle = genius.f.cleanUpSongTitle(songTitle)
 
-  let musicIsPlaying = document.querySelector('#play-pause-button #icon svg g path') && !document.querySelector('#play-pause-button #icon svg g path').getAttribute('d').startsWith('M8')
-  if (!document.querySelector('.play-pause-button.spinner-container').hidden) {
-    // Spinner is showing on playpause button -> song was just changed
-    musicIsPlaying = true
-  }
+  const video = getYoutubeMainVideo()
+  const musicIsPlaying = video && !video.paused
   genius.f.loadLyrics(force, beLessSpecific, songTitle, songArtistsArr, musicIsPlaying)
 }
 
@@ -529,6 +522,8 @@ function createSpinner (spinnerHolder) {
   spinnerHolder.style.right = '0px'
   spinnerHolder.style.top = (lyricscontainer.style.top ? (parseInt(lyricscontainer.style.top) + 50) + 'px' : 0) || '120px'
   spinnerHolder.style.width = lyricscontainer.style.width || (rect.width - 1 + 'px')
+  spinnerHolder.style.maxHeight = (lyricscontainer.getBoundingClientRect().height - 50) + 'px'
+  spinnerHolder.style.overflow = 'hidden'
 
   const spinner = spinnerHolder.appendChild(document.createElement('div'))
   spinner.classList.add('loadingspinner')
@@ -649,6 +644,7 @@ genius.onThemeChanged.push(styleIframeContent)
 
 if (isRobotsTxt === false) {
   GM.registerMenuCommand(SCRIPT_NAME + ' - Show lyrics', () => addLyrics(true))
+  GM.registerMenuCommand(SCRIPT_NAME + ' - Options', () => genius.f.config())
 
   function videoTimeUpdate (ev) {
     if (genius.f.isScrollLyricsEnabled()) {
