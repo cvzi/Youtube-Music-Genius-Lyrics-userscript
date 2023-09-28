@@ -106,7 +106,7 @@ function addCss () {
   #lyricscontainer.geniusSearch {
     background:#212121;
   }
-  #lyricscontainer.geniusSearch a:link, #lyricscontainer.geniusSearch a:visited{
+  #lyricscontainer.geniusSearch a:link, #lyricscontainer.geniusSearch a:visited {
     color:#909090;
     transition:color 300ms;
     text-decoration:none;
@@ -122,6 +122,9 @@ function addCss () {
     font-size:17px;
     padding:7px;
     min-width: 60%;
+  }
+  input.geniussearchinput:focus {
+    outline:0;
   }
   `
   document.head.appendChild(style)
