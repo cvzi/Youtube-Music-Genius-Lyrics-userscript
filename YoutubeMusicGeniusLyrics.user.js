@@ -13,7 +13,7 @@
 // @author          cuzi
 // @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.20
+// @version         4.0.21
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
@@ -276,7 +276,7 @@ function addLyrics (force, beLessSpecific) {
   let songTitle = titleNode.textContent
   const songArtistsArr = Array.from(artistNodes).map(e => e.textContent)
 
-  const song = songArtistsArr.join(', ') + ' - ' + songTitle + '#' + genius.option.themeKey + '@' + lyricsWidth
+  const song = `${songArtistsArr.join(', ')}-${songTitle}#${genius.option.themeKey}@${genius.option.fontSize}@${lyricsWidth}`
 
   if (lastSong === song && document.getElementById('lyricscontainer')) {
     // Same video id and same theme and lyrics are showing -> stop here
@@ -363,7 +363,7 @@ function showSearchField (query) {
     }
   })
   input.addEventListener('keyup', function onSearchLyricsKeyUp (ev) {
-    if (ev.keyCode === 13) {
+    if (ev.code === 'Enter' || ev.code === 'NumpadEnter') {
       ev.preventDefault()
       if (input.value) {
         genius.f.searchByQuery(input.value, b)
