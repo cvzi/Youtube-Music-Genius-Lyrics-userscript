@@ -13,7 +13,7 @@
 // @author          cuzi
 // @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.21
+// @version         4.0.22
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
