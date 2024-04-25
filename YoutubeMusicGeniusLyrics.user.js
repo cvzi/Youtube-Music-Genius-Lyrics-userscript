@@ -15,6 +15,7 @@
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
 // @version         4.0.22
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
+// @require         https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js
 // @grant           GM.xmlHttpRequest
 // @grant           GM.setValue
 // @grant           GM.getValue
