@@ -13,7 +13,7 @@
 // @author          cuzi
 // @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.24
+// @version         4.0.25
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
 // @require         https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js
 // @grant           GM.xmlHttpRequest
@@ -43,6 +43,7 @@
 */
 
 /* global GM, genius, geniusLyrics, GM_addValueChangeListener */ // eslint-disable-line no-unused-vars
+/* jshint asi: true, esversion: 8 */
 
 'use strict'
 
