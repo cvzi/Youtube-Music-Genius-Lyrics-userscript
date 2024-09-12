@@ -51,11 +51,33 @@ const SCRIPT_NAME = 'Youtube Music Genius Lyrics'
 let lyricsDisplayState = 'hidden'
 let lyricsWidth = '40%'
 let resizeRequested = false
+
+const elmBuild = (tag, ...contents) => {
+  /** @type {HTMLElement} */
+  const elm = typeof tag === 'string' ? document.createElement(tag) : tag
+  for (const content of contents) {
+    if (!content || typeof content !== 'object' || (content instanceof Node)) { // eslint-disable-line no-undef
+      elm.append(content)
+    } else if (content.length > 0) {
+      elm.appendChild(elmBuild(...content))
+    } else if (content.style) {
+      Object.assign(elm.style, content.style)
+    } else if (content.classList) {
+      elm.classList.add(...content.classList)
+    } else if (content.attr) {
+      for (const [attr, val] of Object.entries(content.attr)) elm.setAttribute(attr, val)
+    } else {
+      Object.assign(elm, content)
+    }
+  }
+  return elm
+}
+
 function addCss () {
   // Spotify
   const style = document.createElement('style')
   style.id = 'youtube-music-genius-lyrics-style'
-  style.innerHTML = `
+  style.textContent = `
   #lyricscontainer {
     position:fixed;
     right:0px;
@@ -206,7 +228,7 @@ function getCleanLyricsContainer () {
     document.body.appendChild(container)
   } else {
     container = document.getElementById('lyricscontainer')
-    container.innerHTML = ''
+    container.textContent = ''
   }
   container.style = ''
   container.style.top = top + 'px'
@@ -261,7 +283,7 @@ function addLyricsButton () {
   g.appendChild(document.createTextNode('🅖'))
   if (g.getBoundingClientRect().width < 10) { // in case the font doesn't have "🅖" symbol
     g.setAttribute('style', 'border: 2px solid #ffff64; border-radius: 100%; padding: 0px 3px; font-size: 11px; background-color: black; color: #ffff64; font-weight: 700;')
-    g.innerHTML = 'G'
+    g.textContent = 'G'
   }
 }
 
@@ -422,10 +444,7 @@ function listSongs (hits, container, query) {
     hideLyrics()
   })
 
-  // List search results
-  const trackhtml = '<div style="float:left;"><div class="onhover" style="margin-top:-0.25em;display:none"><span style="color:#222;font-size:2.0em">🅖</span></div><div class="onout"><span style="font-size:1.5em">📄</span></div></div>' +
-  '<div style="float:left; margin-left:5px">$artist • $title <br><span style="font-size:0.7em">👁 $stats.pageviews $lyrics_state</span></div><div style="clear:left;"></div>'
-  container.innerHTML = '<ol class="tracklist" style="width:99%; font-size:1.15em"></ol>'
+  elmBuild(container, ['ol', { classList: ['tracklist'] }, { style: { width: '99%', fontSize: '1.15em' } }])
 
   container.style.border = '1px solid black'
   container.style.borderRadius = '3px'
@@ -486,7 +505,44 @@ function listSongs (hits, container, query) {
     li.style.margin = '2px'
     li.style.borderRadius = '3px'
     li.style.backgroundColor = '#333'
-    li.innerHTML = trackhtml.replace(/\$title/g, hit.result.title_with_featured).replace(/\$artist/g, hit.result.primary_artist.name).replace(/\$lyrics_state/g, hit.result.lyrics_state).replace(/\$stats\.pageviews/g, genius.f.metricPrefix(hit.result.stats.pageviews, 1))
+
+    elmBuild(li,
+      ['div',
+        {
+          style: {
+            float: 'left'
+          }
+        },
+        ['div', { classList: ['onhover'] }, {
+          style: {
+            marginTop: '-0.25em',
+            display: 'none'
+          }
+        }, ['span', '🅖', {
+          style: {
+            color: '#222',
+            fontSize: '2.0em'
+          }
+        }]],
+        ['div', { classList: ['onout'] }, ['span', '📄', {
+          style: {
+            fontSize: '1.5em'
+          }
+        }]]
+      ],
+      ['div', {
+        style: {
+          float: 'left',
+          marginLeft: '5px'
+        }
+      },
+        `${hit.result.primary_artist.name} • ${hit.result.title_with_featured}`,
+        ['br'],
+        ['span', { style: { fontSize: '0.7em' } }, `👁 ${genius.f.metricPrefix(hit.result.stats.pageviews, 1)} ${hit.result.lyrics_state}`]
+      ],
+      ['div', { style: { clear: 'left' } }]
+    )
+
     li.dataset.hit = JSON.stringify(hit)
 
     li.addEventListener('click', onclick)
@@ -497,26 +553,44 @@ function listSongs (hits, container, query) {
 }
 
 function loremIpsum () {
-  const classText = ['<span class="gray">', '</span>']
-  const classWhitespace = ['<span class="white">', '</span>']
   const random = (x) => 1 + parseInt(Math.random() * x)
-  let text = ''
-  for (let v = 0; v < Math.max(3, random(5)); v++) {
+
+  // Create a container for the entire content
+  const container = document.createElement('div')
+
+  for (let v = 0; v < Math.max(3, random(5)) + 4; v++) {
     for (let b = 0; b < random(6); b++) {
-      const line = []
+      const lineContainer = document.createElement('span')
+      lineContainer.classList.add('gray')
+
       for (let l = 0; l < random(9); l++) {
         for (let w = 0; w < 1 + random(10); w++) {
           for (let i = 0; i < 1 + random(7); i++) {
-            line.push('x')
+            // Create and append 'x' text node
+            const xTextNode = document.createTextNode('x')
+            lineContainer.appendChild(xTextNode)
           }
-          line.push(classText[1] + classWhitespace[0] + '&#160;' + classWhitespace[1] + classText[0])
+
+          // Add the whitespace span
+          const whiteSpaceSpan = document.createElement('span')
+          whiteSpaceSpan.classList.add('white')
+          whiteSpaceSpan.textContent = '\u00A0' // Non-breaking space
+          lineContainer.appendChild(whiteSpaceSpan)
         }
-        line.push(classText[1] + '\n<br>\n' + classText[0])
+
+        // Add line break (br) after each set
+        lineContainer.appendChild(document.createElement('br'))
       }
-      text += classText[0] + line.join('') + classText[1] + '\n<br>\n'
+
+      // Append the line container to the main container
+      container.appendChild(lineContainer)
+
+      // Add a line break after each section
+      container.appendChild(document.createElement('br'))
     }
   }
-  return text
+
+  return container // Return the main container with all generated elements
 }
 
 function createSpinner (spinnerHolder) {
@@ -534,9 +608,9 @@ function createSpinner (spinnerHolder) {
   spinner.classList.add('loadingspinner')
   spinner.style.marginLeft = (rect.width / 2) + 'px'
 
-  const lorem = spinnerHolder.appendChild(document.createElement('div'))
+  const lorem = loremIpsum()
   lorem.classList.add('lorem')
-  lorem.innerHTML = loremIpsum()
+  spinnerHolder.appendChild(lorem)
 
   function resizeSpinner () {
     const spinnerHolder = document.querySelector('.loadingspinnerholder')
