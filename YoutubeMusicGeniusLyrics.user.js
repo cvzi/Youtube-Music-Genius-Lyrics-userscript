@@ -50,7 +50,6 @@
 const SCRIPT_NAME = 'Youtube Music Genius Lyrics'
 let lyricsDisplayState = 'hidden'
 let lyricsWidth = '40%'
-let resizeRequested = false
 
 const elmBuild = (tag, ...contents) => {
   /** @type {HTMLElement} */
@@ -188,7 +187,7 @@ function setFrameDimensions (container, iframe) {
 
 function onResize () {
   window.setTimeout(function () {
-    resizeRequested = true
+    document.body.dispatchEvent(new CustomEvent('genius-resize-requested'))
   }, 200)
 }
 
@@ -677,6 +676,7 @@ const getNodeHTML = (e) => {
 }
 
 async function setupMain () {
+  let resizeRequested = false
   lyricsWidth = await GM.getValue('lyricswidth', '40%')
   let runid = 0
   let lastNodeString = ''
@@ -706,6 +706,14 @@ async function setupMain () {
     Promise.resolve(runid_).then(onMediaChanged_).catch(console.warn)
   }
 
+  const onResizeRequested = (evt) => {
+    if (runid > 1e9) runid = 9
+    const runid_ = ++runid
+    lastNodeString = ''
+    resizeRequested = true
+    Promise.resolve(runid_).then(onMediaChanged_).catch(console.warn)
+  }
+
   document.addEventListener('durationchange', onMediaChanged, true)
   document.addEventListener('loadedmetadata', onMediaChanged, true)
   document.addEventListener('canplay', onMediaChanged, true)
@@ -714,6 +722,7 @@ async function setupMain () {
   document.addEventListener('abort', onMediaChanged, true)
   document.addEventListener('error', onMediaChanged, true)
   document.addEventListener('ended', onMediaChanged, true)
+  document.addEventListener('genius-resize-requested', onResizeRequested, true)
   Promise.resolve(++runid).then(onMediaChanged_)
 }
 
