@@ -42,7 +42,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/* global GM, genius, geniusLyrics, GM_addValueChangeListener */ // eslint-disable-line no-unused-vars
+/* global GM, genius, geniusLyrics, GM_addValueChangeListener, HTMLMediaElement */ // eslint-disable-line no-unused-vars
 /* jshint asi: true, esversion: 8 */
 
 'use strict'
@@ -239,8 +239,16 @@ function getCleanLyricsContainer () {
 }
 
 function getSongInfoNodes () {
-  const titleNode = document.querySelector('.ytmusic-player-bar .title.ytmusic-player-bar')
-  const artistNodes = document.querySelectorAll('.ytmusic-player-bar.subtitle a[href*="channel/"]')
+  let playerBars = [...document.querySelectorAll('ytmusic-player-bar.ytmusic-app')].filter(e => !e.closest('[hidden]') && !e.closest('[disabled]'))
+  if (playerBars.length === 0) playerBars = [...document.querySelectorAll('ytmusic-player-bar')].filter(e => !e.closest('[hidden]') && !e.closest('[disabled]'))
+  let titleNode = null
+  let artistNodes = []
+  if (playerBars.length === 1) {
+    const playerBar = playerBars[0]
+    const key = '__shady_native_querySelector' in playerBar && typeof playerBar.__shady_native_querySelector === 'function' && typeof playerBar.__shady_native_querySelectorAll === 'function' ? '__shady_native_querySelector' : 'querySelector'
+    titleNode = playerBar[key]('.title.ytmusic-player-bar')
+    artistNodes = [...playerBar[`${key}All`]('.ytmusic-player-bar.subtitle a[href*="channel/"]')]
+  }
   return {
     titleNode,
     artistNodes,
@@ -661,10 +669,24 @@ function configLyricsWidth (div) {
   input.addEventListener('change', onChange)
 }
 
-function main () {
-  GM.getValue('lyricswidth', '40%').then(function (v) {
-    lyricsWidth = v
-    if (getSongInfoNodes().isSongQueuedOrPlaying) {
+const getNodeHTML = (e) => {
+  if (e) {
+    return e.__shady_native_innerHTML || e.innerHTML || ''
+  }
+  return ''
+}
+
+async function setupMain () {
+  lyricsWidth = await GM.getValue('lyricswidth', '40%')
+  let runid = 0
+  let lastNodeString = ''
+  const onMediaChanged_ = (runid_) => {
+    if (runid_ !== runid) return
+    const songInfoNodes = getSongInfoNodes()
+    const nodeString = `${(getNodeHTML(songInfoNodes?.titleNode) || '')}|${(songInfoNodes?.artistNodes?.map(e => getNodeHTML(e))?.join(',') || '')}`
+    if (lastNodeString === nodeString) return
+    lastNodeString = nodeString
+    if (nodeString.length > 1 && songInfoNodes.isSongQueuedOrPlaying) {
       if (genius.option.autoShow) {
         addLyrics()
       } else {
@@ -675,7 +697,28 @@ function main () {
         resize()
       }
     }
-  })
+  }
+
+  const onMediaChanged = (evt) => {
+    if (!(evt?.target instanceof HTMLMediaElement)) return
+    if (runid > 1e9) runid = 9
+    const runid_ = ++runid
+    Promise.resolve(runid_).then(onMediaChanged_).catch(console.warn)
+  }
+
+  document.addEventListener('durationchange', onMediaChanged, true)
+  document.addEventListener('loadedmetadata', onMediaChanged, true)
+  document.addEventListener('canplay', onMediaChanged, true)
+  document.addEventListener('canplaythrough', onMediaChanged, true)
+  document.addEventListener('emptied', onMediaChanged, true)
+  document.addEventListener('abort', onMediaChanged, true)
+  document.addEventListener('error', onMediaChanged, true)
+  document.addEventListener('ended', onMediaChanged, true)
+  Promise.resolve(++runid).then(onMediaChanged_)
+}
+
+function main () {
+  // do nothing
 }
 
 function styleIframeContent () {
@@ -744,6 +787,7 @@ const genius = geniusLyrics({
   emptyURL: 'https://music.youtube.com/robots.txt',
   config: [configLyricsWidth],
   main,
+  setupMain,
   addCss,
   listSongs,
   showSearchField,
