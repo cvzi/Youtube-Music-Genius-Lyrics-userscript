@@ -13,7 +13,7 @@
 // @author          cuzi
 // @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.28
+// @version         4.0.29
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
 // @require         https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js
 // @grant           GM.xmlHttpRequest
@@ -687,6 +687,39 @@ function styleIframeContent () {
         genius.style.enabled = false
         return false
       }
+
+      const ytdApp = document.querySelector('ytmusic-app') || document.body
+      if (!ytdApp) return
+
+      const cStyle = window.getComputedStyle(ytdApp)
+      let background = cStyle.getPropertyValue('--ytmusic-general-background-c')
+      let color = cStyle.getPropertyValue('--ytmusic-text-primary')
+      let slbc = cStyle.getPropertyValue('--ytd-searchbox-legacy-button-color')
+      const linkColor = cStyle.getPropertyValue('--yt-spec-call-to-action') || cStyle.getPropertyValue('--ytmusic-text-primary')
+      const annotatedSpanBgColor = cStyle.getPropertyValue('--yt-spec-static-overlay-icon-inactive') || cStyle.getPropertyValue('--yt-spec-static-overlay-text-secondary') || ''
+      const annotatedSpanBgColorActive = cStyle.getPropertyValue('--yt-spec-static-overlay-button-hover') || cStyle.getPropertyValue('--yt-spec-static-overlay-button-primary') || ''
+
+      if (typeof background === 'string' && typeof color === 'string' && background.length > 3 && color.length > 3) {
+        // do nothing
+      } else {
+        background = null
+        color = null
+      }
+
+      if (typeof slbc === 'string') {
+        // do nothing
+      } else {
+        slbc = null
+      }
+
+      Object.assign(genius.styleProps, {
+        '--egl-background': (background === null ? '' : `${background}`),
+        '--egl-color': (color === null ? '' : `${color}`),
+        '--egl-infobox-background': (slbc === null ? '' : `${slbc}`),
+        '--egl-link-color': (`${linkColor}`),
+        '--egl-annotated-span-bgcolor': (`${annotatedSpanBgColor}`),
+        '--egl-annotated-span-bgcolor-active': (`${annotatedSpanBgColorActive}`)
+      })
       return true
     }
   } else {
@@ -696,6 +729,12 @@ function styleIframeContent () {
 }
 
 const isRobotsTxt = document.location.href.indexOf('robots.txt') >= 0
+const defaultOptions = {
+  enableStyleSubstitution: true,
+  normalizeClassV2: true,
+  cacheHTMLRequest: true
+}
+
 const genius = geniusLyrics({
   GM,
   scriptName: SCRIPT_NAME,
@@ -713,11 +752,9 @@ const genius = geniusLyrics({
   getCleanLyricsContainer,
   setFrameDimensions,
   onResize,
-  createSpinner
+  createSpinner,
+  defaultOptions
 })
-
-genius.option.enableStyleSubstitution = true
-genius.option.cacheHTMLRequest = true // 1 lyrics page consume 2XX KB [OR 25 ~ 50KB under ]
 
 genius.onThemeChanged.push(styleIframeContent)
 
