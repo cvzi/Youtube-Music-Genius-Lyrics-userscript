@@ -42,7 +42,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/* global GM, genius, geniusLyrics, GM_addValueChangeListener, HTMLMediaElement */ // eslint-disable-line no-unused-vars
+/* global GM, genius, geniusLyrics, GM_addValueChangeListener, HTMLMediaElement, MutationObserver */ // eslint-disable-line no-unused-vars
 /* jshint asi: true, esversion: 8 */
 
 'use strict'
@@ -680,13 +680,13 @@ async function setupMain () {
   lyricsWidth = await GM.getValue('lyricswidth', '40%')
   let runid = 0
   let lastNodeString = ''
-  const onMediaChanged_ = (runid_) => {
-    if (runid_ !== runid) return
+  const mutationObserver = new MutationObserver(() => {
     const songInfoNodes = getSongInfoNodes()
     const nodeString = `${(getNodeHTML(songInfoNodes?.titleNode) || '')}|${(songInfoNodes?.artistNodes?.map(e => getNodeHTML(e))?.join(',') || '')}`
     if (lastNodeString === nodeString) return
     lastNodeString = nodeString
     if (nodeString.length > 1 && songInfoNodes.isSongQueuedOrPlaying) {
+      console.log('debug: Youtube Music Genius Lyrics', songInfoNodes, nodeString)
       if (genius.option.autoShow) {
         addLyrics()
       } else {
@@ -696,6 +696,15 @@ async function setupMain () {
         resizeRequested = false
         resize()
       }
+    }
+  })
+  const onMediaChanged_ = (runid_) => {
+    if (runid_ !== runid) return
+    const songInfoNodes = getSongInfoNodes()
+    const titleNode = songInfoNodes?.titleNode
+    if (titleNode) {
+      mutationObserver.observe(titleNode, { attributes: true, childList: true, subtree: true, characterData: true, attributeFilter: ['media-changed-at', 'title'] })
+      titleNode.setAttribute('media-changed-at', Date.now())
     }
   }
 
