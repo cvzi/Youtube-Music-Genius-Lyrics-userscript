@@ -321,11 +321,23 @@ function addLyrics (force, beLessSpecific) {
   songTitle = genius.f.cleanUpSongTitle(songTitle)
 
   const video = getYoutubeMainVideo()
+  console.log('debug: Youtube Music Genius Lyrics - getYoutubeMainVideo()', video)
   const musicIsPlaying = video && !video.paused
   genius.f.loadLyrics(force, beLessSpecific, songTitle, songArtistsArr, musicIsPlaying)
 }
 
 function getYoutubeMainVideo () {
+  const activeMedia_ = activeMedia
+  if (activeMedia_) {
+    const moviePlayer = activeMedia_.closest('#movie_player')
+    const mediaList = moviePlayer ? moviePlayer.querySelectorAll('audio, video') : null
+    if (mediaList && mediaList.length === 1 && mediaList[0] === activeMedia_) {
+      return activeMedia_
+    }
+    if (activeMedia_.classList.contains('html5-main-video')) {
+      return activeMedia_
+    }
+  }
   let video = document.querySelector('#movie_player video[src]')
   if (video !== null) {
     return video
@@ -674,7 +686,7 @@ const getNodeHTML = (e) => {
   }
   return ''
 }
-
+let activeMedia = null
 async function setupMain () {
   let resizeRequested = false
   lyricsWidth = await GM.getValue('lyricswidth', '40%')
@@ -686,7 +698,7 @@ async function setupMain () {
     if (lastNodeString === nodeString) return
     lastNodeString = nodeString
     if (nodeString.length > 1 && songInfoNodes.isSongQueuedOrPlaying) {
-      console.log('debug: Youtube Music Genius Lyrics', songInfoNodes, nodeString)
+      console.log('debug: Youtube Music Genius Lyrics - Song Info', songInfoNodes, nodeString)
       if (genius.option.autoShow) {
         addLyrics()
       } else {
@@ -705,13 +717,17 @@ async function setupMain () {
     if (titleNode) {
       mutationObserver.observe(titleNode, { attributes: true, childList: true, subtree: true, characterData: true, attributeFilter: ['media-changed-at', 'title'] })
       titleNode.setAttribute('media-changed-at', Date.now())
+    } else {
+      activeMedia = null
     }
   }
 
   const onMediaChanged = (evt) => {
-    if (!(evt?.target instanceof HTMLMediaElement)) return
+    const target = evt?.target
+    if (!(target instanceof HTMLMediaElement)) return
     if (runid > 1e9) runid = 9
     const runid_ = ++runid
+    activeMedia = target
     Promise.resolve(runid_).then(onMediaChanged_).catch(console.warn)
   }
 
