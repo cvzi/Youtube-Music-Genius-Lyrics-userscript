@@ -13,7 +13,7 @@
 // @author          cuzi
 // @icon            https://music.youtube.com/img/favicon_144.png
 // @supportURL      https://github.com/cvzi/Youtube-Music-Genius-Lyrics-userscript/issues
-// @version         4.0.29
+// @version         4.0.30
 // @require         https://greasyfork.org/scripts/406698-geniuslyrics/code/GeniusLyrics.js
 // @require         https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.5.0/lz-string.min.js
 // @grant           GM.xmlHttpRequest
@@ -322,8 +322,7 @@ function addLyrics (force, beLessSpecific) {
 
   const video = getYoutubeMainVideo()
   console.log('debug: Youtube Music Genius Lyrics - getYoutubeMainVideo()', video)
-  const musicIsPlaying = video && !video.paused
-  genius.f.loadLyrics(force, beLessSpecific, songTitle, songArtistsArr, musicIsPlaying)
+  genius.f.loadLyrics(force, beLessSpecific, songTitle, songArtistsArr, true)
 }
 
 function getYoutubeMainVideo () {
@@ -692,6 +691,7 @@ async function setupMain () {
   lyricsWidth = await GM.getValue('lyricswidth', '40%')
   let runid = 0
   let lastNodeString = ''
+
   const mutationObserver = new MutationObserver(() => {
     const songInfoNodes = getSongInfoNodes()
     const nodeString = `${(getNodeHTML(songInfoNodes?.titleNode) || '')}|${(songInfoNodes?.artistNodes?.map(e => getNodeHTML(e))?.join(',') || '')}`
@@ -700,7 +700,7 @@ async function setupMain () {
     if (nodeString.length > 1 && songInfoNodes.isSongQueuedOrPlaying) {
       console.log('debug: Youtube Music Genius Lyrics - Song Info', songInfoNodes, nodeString)
       if (genius.option.autoShow) {
-        addLyrics()
+        addLyrics(true)
       } else {
         addLyricsButton()
       }
@@ -710,6 +710,7 @@ async function setupMain () {
       }
     }
   })
+
   const onMediaChanged_ = (runid_) => {
     if (runid_ !== runid) return
     const songInfoNodes = getSongInfoNodes()
